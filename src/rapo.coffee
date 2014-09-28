@@ -12,6 +12,36 @@
 
 phantom = require "phantom"
 
+fGetResultsForViewportSize = ( oPhantom, oOptions, fNext ) ->
+
+    # TODO
+    # Compute data as total requests size
+    # Time
+    # …
+
+    iRequests = 0
+    iResponses = 0
+
+    oPhantom.createPage ( oPage ) ->
+        oPage.set "viewportSize",
+            width: oOptions.width
+            height: oOptions.height
+
+        oPage.set "onResourceRequested", ( oRequest ) ->
+            console.log "Request (#{ ++iRequests }):", "ID:#{ oRequest.id }", oRequest.url
+            # console.log "Request:", JSON.stringify oRequest, undefined, 4
+            # TODO : analyze & store request
+
+        oPage.set "onResourceReceived", ( oResponse ) ->
+            console.log "Response (#{ ++iResponses }):", "ID:#{ oResponse.id }", oResponse.url
+            # console.log "Response:", JSON.stringify oResponse, undefined, 4
+            # TODO : analyze & store response, build metrics
+
+        oPage.open oOptions.url, ( sStatus ) ->
+            console.log "Total Requests:", iRequests
+            console.log "Total Responses:", iResponses
+            fNext? null, {}
+
 module.exports = ( sURL, oOptions = {}, fNext = null ) ->
 
     # check url
@@ -24,22 +54,15 @@ module.exports = ( sURL, oOptions = {}, fNext = null ) ->
         fNext = oOptions
         oOptions = {}
 
-    # phantom magic (basic, cf. https://www.npmjs.org/package/phantom)
-
     phantom.create ( oPhantom ) ->
-        oPhantom.createPage ( oPage ) ->
-            oPage.open sURL, ( sStatus ) ->
-                console.log "opened page? ", sStatus
-                oPage.evaluate ( -> document.title ), ( sResult ) ->
-                    console.log 'Page title is ' + sResult
-                    oPhantom.exit()
 
+        # TMP code
+        oMobileViewportOptions =
+            url: sURL
+            width: 320
+            height: 480
 
+        fGetResultsForViewportSize oPhantom, oMobileViewportOptions, ( oError, oResults ) ->
+            fNext? null, oResults
 
-                    fNext? null, {}
-
-    # TODO
-    # Fetch all requests
-    # Fetch requests by viewport size
-    # Compute data as total requests size
-    # …
+        # TODO : multiple viewport sizes analysis
