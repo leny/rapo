@@ -32,4 +32,9 @@ error = ( oError ) ->
     .description "Performance reviews for websites, using PhantomJS."
     .parse process.argv
 
-console.log "There's so many things TODO here... :)"
+error "No URL given!" unless sURL = program.args[ 0 ]
+
+spinner.start 50
+rapo sURL, {}, ( oError, oResults ) ->
+    spinner.stop()
+    console.log oResults
