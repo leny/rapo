@@ -28,7 +28,7 @@ error = ( oError ) ->
 
 ( program = require "commander" )
     .version pkg.version
-    .usage "[options] <urm>"
+    .usage "[options] <url>"
     .description "Performance reviews for websites, using PhantomJS."
     .parse process.argv
 
