@@ -38,3 +38,4 @@ spinner.start 50
 rapo sURL, {}, ( oError, oResults ) ->
     spinner.stop()
     console.log oResults
+    process.exit 0
