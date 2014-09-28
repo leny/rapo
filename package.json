@@ -54,6 +54,7 @@
   "dependencies": {
     "chalk": "^0.5.1",
     "commander": "^2.3.0",
+    "phantom": "^0.6.5",
     "simple-spinner": "0.0.2"
   }
 }
