@@ -12,6 +12,8 @@
 
 phantom = require "phantom"
 
+ResourcesCollector = require "./metrics/resources-collector.js"
+
 fGetResultsForViewportSize = ( oPhantom, oOptions, fNext ) ->
 
     # TODO
@@ -27,20 +29,10 @@ fGetResultsForViewportSize = ( oPhantom, oOptions, fNext ) ->
             width: oOptions.width
             height: oOptions.height
 
-        oPage.set "onResourceRequested", ( oRequest ) ->
-            console.log "Request (#{ ++iRequests }):", "ID:#{ oRequest.id }", oRequest.url
-            # console.log "Request:", JSON.stringify oRequest, undefined, 4
-            # TODO : analyze & store request
-
-        oPage.set "onResourceReceived", ( oResponse ) ->
-            console.log "Response (#{ ++iResponses }):", "ID:#{ oResponse.id }", oResponse.url
-            # console.log "Response:", JSON.stringify oResponse, undefined, 4
-            # TODO : analyze & store response, build metrics
+        oResourceCollector = new ResourcesCollector oPage
 
         oPage.open oOptions.url, ( sStatus ) ->
-            console.log "Total Requests:", iRequests
-            console.log "Total Responses:", iResponses
-            fNext? null, {}
+            fNext? null, oResourceCollector.generateStats()
 
 module.exports = ( sURL, oOptions = {}, fNext = null ) ->
 
